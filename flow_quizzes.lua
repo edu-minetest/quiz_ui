@@ -5,16 +5,15 @@ local formspec_escape = minetest.formspec_escape
         -- DIR_DELIM .. "pack" .. DIR_DELIM
 
 local MOD_PATH = quiz_ui.MOD_PATH
-local defaultTextureDir = MOD_PATH .. ".." .. DIR_DELIM .. ".." .. DIR_DELIM .. "textures" .. DIR_DELIM .. "base" ..
-  DIR_DELIM .. "pack" .. DIR_DELIM
 
-local openQuizEdit = dofile(MOD_PATH .. "flow_quiz.lua")
+local openQuizEdit = dofile(MOD_PATH .. "flow_quiz.lua").open
 
 
 local S = quiz_ui.get_translator
+local qS = quiz.get_translator
+
 local settings = quiz.settings
 -- local Quizzes = quiz.quizzes
-local isInvalidQuiz = quiz.isInvalidQuiz
 local loadConfig = quiz.loadConfig
 local saveConfig = quiz.saveConfig
 -- GUI elements are accessible with flow.widgets. Using
@@ -27,14 +26,17 @@ local calcType = quiz.calcType
 local quizAdminForm
 
 local TYPES_STR = {
-  text = S("text"),
+  string = S("string"),
+  number = S("number"),
+  boolean = S("boolean"),
   calc = S("calc"),
   select = S("select"),
 }
+quiz_ui.TYPES_STR = TYPES_STR
 
 local function addQuiz(tbl, quiz, ix)
   table.insert(tbl, ix)
-  table.insert(tbl, TYPES_STR[quiz.type or "text"])
+  table.insert(tbl, TYPES_STR[quiz.type or "string"])
   if quiz.type == "calc" then
     table.insert(tbl, quiz.answer)
     local expr = calcType.parse(quiz.answer, quiz.forceInt)
@@ -55,8 +57,8 @@ local function searchQuizzes(s, session)
       for ix, vQuiz in pairs(quizList) do
         if string.find(vQuiz.title, s)
           or string.find(vQuiz.answer, s)
-          or string.find(vQuiz.type or "text", s)
-          or string.find(TYPES_STR[quiz.type or "text"], s)
+          or string.find(vQuiz.type or "string", s)
+          or string.find(TYPES_STR[quiz.type or "string"], s)
         then
           table.insert(lookup, ix)
           addQuiz(result, vQuiz, ix)
@@ -77,18 +79,20 @@ local function genQuizList(session)
     return search.result
   end
   local quizList = settings.quiz
-  local result = session.quizList
+  print('TCL:: ~ file: flow_quizzes.lua ~ line 82 ~ quizList', dump(quizList));
+  local result = nil -- session.quizList
   if result == nil then
     result = {}
     for ix, quiz in pairs(quizList) do
       addQuiz(result, quiz, ix)
     end
-    session.quizList = result
+    -- session.quizList = result
   end
   return result
 end
 
 local function flowQuizList(player, ctx)
+  local session = getSession(player)
   local result = gui.VBox {
     gui.TableColumns {
       {type = "text", opts = {}}, -- index
@@ -100,17 +104,15 @@ local function flowQuizList(player, ctx)
       w = 9.25,
       h = 7,
       name = "tblQuiz",
-      cells = genQuizList(ctx.session),
+      cells = genQuizList(session),
       on_event = function(player, ctx)
         local evt = ctx.form.tblQuiz
         if evt.type == "DCL" then
           -- double-click
           local quizList = settings.quiz
-          local quiz = quizList[evt.row]
           openQuizEdit(player, {
-            quiz = quiz, parent = quizAdminForm,
-            -- on_close = function(player, ctx)
-            -- end
+            quiz = quizList[evt.row],
+            parent = ctx,
           })
         end
       end
@@ -121,7 +123,7 @@ end
 
 local function do_search(player, ctx)
   local search_for = ctx.form.fdSearch
-  local session = ctx.session
+  local session = getSession(player)
   local last_search = session.last_search
   local repaint = false
   if search_for == last_search then return end
@@ -134,20 +136,10 @@ local function do_search(player, ctx)
 end
 
 local function flowQuizAdmin(player, ctx)
-  local session = ctx.session
+  local session = getSession(player)
   return gui.VBox{
     -- min_w = 12,
     -- min_h = 9,
-    gui.HBox{ -- Title Bar
-      gui.Label{label=S("Quiz Manager"), h=1, align_h = "centre", expand = true},
-      gui.Spacer{},
-      -- These buttons will be on the right-hand side of the screen
-      gui.ButtonExit{name="btnCancel", label = S("Cancel"), on_event = function(player, ctx)
-        minetest.chat_send_player(player:get_player_name(), 'Exit: '.. dump(ctx.form.btnCancel))
-      end},
-      gui.ButtonExit{name="btnOk", label = S("Ok"), on_event = function(player, ctx)
-      end},
-    },
     gui.HBox{ -- Toolbar
       gui.Field{
         name="fdSearch",
@@ -167,10 +159,10 @@ local function flowQuizAdmin(player, ctx)
         name = "btnSearchClear",
         texture_name = "clear.png",
         on_event = function(player, ctx)
-          -- local session = getSession(player:get_player_name())
+          local session = getSession(player)
           -- session.search_for = ""
           ctx.form.fdSearch = ""
-          ctx.session.search = nil
+          session.search = nil
           return true
         end
       },
@@ -179,9 +171,12 @@ local function flowQuizAdmin(player, ctx)
         name="btnAdd", label = S("New"),
         on_event = function(player, ctx)
           openQuizEdit(player, {
-            parent = quizAdminForm,
-            -- on_close = function(player, ctx)
-            -- end
+            parent = ctx,
+            on_ok = function(player, ctx)
+              if ctx.quiz then
+                table.insert(settings.quiz, ctx.quiz)
+              end
+            end
         })
         end
       },
@@ -192,11 +187,11 @@ local function flowQuizAdmin(player, ctx)
           if evt and evt.row then
             local quizList = settings.quiz
             local quiz = quizList[evt.row]
-            local session = ctx.session
+            -- local session = ctx.session
             openQuizEdit(player, {
-              quiz = quiz, parent = quizAdminForm,
+              quiz = quiz, parent = ctx,
               on_ok = function(player, ctx)
-                session.quizList = nil
+                -- session.quizList = nil
               end
             })
           end
@@ -207,16 +202,16 @@ local function flowQuizAdmin(player, ctx)
         on_event = function(player, ctx)
           local evt = ctx.form.tblQuiz
           if evt and evt.row then
-            local session = ctx.session
+            local session = getSession(player)
             local quizList = settings.quiz
-            local search = ctx.session.search
+            local search = session.search
             if search then
               local idx =search.lookup[evt.row]
               table.remove(quizList, idx)
             else
               table.remove(quizList, evt.row)
             end
-            session.quizList = nil
+            -- session.quizList = nil
             return true
           end
         end
@@ -232,11 +227,13 @@ local function newQuizAdminUI()
   end)
 end
 
-local function openQuizAdmin(playerName, ctx)
-  local session = getSession(playerName)
-  if ctx then ctx.session = session else ctx = {session = session} end
-  quizAdminForm = newQuizAdminUI()
-  quizAdminForm:show(playerName, ctx)
+local function openQuizAdmin(playerName, params)
+  -- local session = getSession(playerName)
+  -- if ctx then ctx.session = session else ctx = {session = session} end
+  local self = newQuizAdminUI()
+  if params == nil then params = {} end
+  params.self = self
+  self:show(playerName, params)
 end
 
 return {

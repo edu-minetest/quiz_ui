@@ -1,22 +1,25 @@
-local minetest, quiz, yaml, flow, DIR_DELIM, fgettext = minetest, quiz, yaml, flow, DIR_DELIM, fgettext
+local minetest, quiz, yaml, flow, DIR_DELIM = minetest, quiz, yaml, flow, DIR_DELIM
 
 local MOD_PATH = quiz_ui.MOD_PATH
 
 local flowQuizAdmin = dofile(MOD_PATH .. "flow_quizzes.lua").flow
 
+local loadConfig = quiz.loadConfig
+local saveConfig = quiz.saveConfig
 
 local S = quiz_ui.get_translator
-local settings = quiz.settings
+local qS = quiz.get_translator
+-- local settings = quiz.settings
 local gui = flow.widgets
 
 local getSession = quiz.getSession
-local adminForm
+-- local adminForm
 
 local function flowTodo(player, ctx)
   return gui.VBox {
     -- min_w = 12,
     -- min_h = 9,
-    gui.Label{label=S("Quiz Manager").."Awards Page(TODO)", align_h = "centre", expand = true},
+    gui.Label{label=S("Quiz Manager").." Awards(TODO)", align_h = "centre", expand = true},
   }
 end
 
@@ -39,7 +42,7 @@ local function getTabNames()
 end
 
 local function flowAdmin(player, ctx)
-  local current_tab = ctx.session.ui.current_tab or 1
+  local current_tab = getSession(player).ui.current_tab or 1
   if current_tab > #tabs then current_tab = 1 end
 
   return gui.VBox {
@@ -53,11 +56,33 @@ local function flowAdmin(player, ctx)
       draw_border = false,
       current_tab = current_tab,
       on_event = function(player, ctx)
-          local ui = ctx.session.ui
-          ui.current_tab = ctx.form.tab
+        local tabIndex = ctx.form.tab
+        getSession(player).ui.current_tab = tabIndex
+        if tabIndex then
           -- refresh page
-          adminForm:show(player, ctx)
+          return true
+          -- ctx.self:show(player, ctx)
+        end
       end
+    },
+    gui.HBox{ -- Title Bar
+      gui.Label{label=S("Quiz Manager") .. ":" .. tabs[current_tab].label, h=1, align_h = "centre", expand = true},
+      gui.Spacer{},
+      -- These buttons will be on the right-hand side of the screen
+      gui.ButtonExit{name="btnCancel", label = S("Cancel"), on_event = function(player, ctx)
+        local msg = qS("Quiz config file loaded.")
+        if not loadConfig() then
+          msg = qS("Quiz config file loading failed.")
+        end
+        minetest.chat_send_player(player:get_player_name(), msg)
+      end},
+      gui.ButtonExit{name="btnOk", label = S("Ok"), on_event = function(player, ctx)
+        local msg = qS("Quiz config file saved.")
+        if not saveConfig() then
+          msg = qS("Quiz config file saving failed.")
+        end
+        minetest.chat_send_player(player:get_player_name(), msg)
+      end},
     },
     tabs[current_tab].flow(player, ctx),
   }
@@ -69,13 +94,18 @@ local function newAdminUI()
   end)
 end
 
-local function openAdmin(playerName, ctx)
+-- params: pass to ctx
+--    parent optional the parent context of the flow UI if exists
+--    self: the self flow ui.
+local function openAdmin(playerName, params)
   local session = getSession(playerName)
   if session.ui == nil then session.ui = {} end
-  if ctx then ctx.session = session else ctx = {session = session} end
-
-  adminForm = newAdminUI()
-  adminForm:show(playerName, ctx)
+  -- if ctx then ctx.session = session else ctx = {session = session} end
+  local self = newAdminUI()
+  if params == nil then params = {} end
+  params.self = self
+  -- local ctx = {self = self, parent = params.parent}
+  self:show(playerName, params)
 end
 
 return {

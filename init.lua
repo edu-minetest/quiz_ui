@@ -15,13 +15,17 @@ quiz_ui.MOD_PATH = MOD_PATH
 local openQuizAdmin = dofile(MOD_PATH .. "flow_admin.lua").open
 quiz_ui.openQuizAdmin = openQuizAdmin
 
+
+local function uiChatCommand(playerName, param)
+  openQuizAdmin(playerName)
+  return true
+end
+quiz.defaultChatCmd = uiChatCommand
+
 minetest.register_chatcommand("quiz_ui", {
   description = S("Show the Quiz Manager UI"),
   privs = {
     quiz = true,
   },
-  func = function(playerName, param)
-    openQuizAdmin(playerName)
-    return true
-  end,
+  func = uiChatCommand,
 })
