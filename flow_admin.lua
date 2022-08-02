@@ -2,7 +2,9 @@ local minetest, quiz, yaml, flow, DIR_DELIM = minetest, quiz, yaml, flow, DIR_DE
 
 local MOD_PATH = quiz_ui.MOD_PATH
 
-local flowQuizAdmin = dofile(MOD_PATH .. "flow_quizzes.lua").flow
+local flowQuizzes = dofile(MOD_PATH .. "flow_quizzes.lua").flow
+local flowAwards = dofile(MOD_PATH .. "flow_awards.lua").flow
+local flowConfig = dofile(MOD_PATH .. "flow_config.lua").flow
 
 local loadConfig = quiz.loadConfig
 local saveConfig = quiz.saveConfig
@@ -19,17 +21,20 @@ local function flowTodo(player, ctx)
   return gui.VBox {
     -- min_w = 12,
     -- min_h = 9,
-    gui.Label{label=S("Quiz Manager").." Awards(TODO)", align_h = "centre", expand = true},
+    gui.Label{label="(TODO)", align_h = "centre", expand = true},
   }
 end
 
 local tabs = {
   {
     label = S("Quizzes"),
-    flow = flowQuizAdmin,
+    flow = flowQuizzes,
   }, {
     label = S("Awards"),
-    flow = flowTodo,
+    flow = flowAwards,
+  }, {
+    label = S("Advance Config"),
+    flow = flowConfig,
   }
 }
 
@@ -66,7 +71,7 @@ local function flowAdmin(player, ctx)
       end
     },
     gui.HBox{ -- Title Bar
-      gui.Label{label=S("Quiz Manager") .. ":" .. tabs[current_tab].label, h=1, align_h = "centre", expand = true},
+      gui.Label{label=tabs[current_tab].label, h=1, align_h = "centre", expand = true},
       gui.Spacer{},
       -- These buttons will be on the right-hand side of the screen
       gui.ButtonExit{name="btnCancel", label = S("Cancel"), on_event = function(player, ctx)

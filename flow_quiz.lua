@@ -1,5 +1,6 @@
 local minetest, quiz, yaml, flow, DIR_DELIM = minetest, quiz, yaml, flow, DIR_DELIM
 local S = quiz_ui.get_translator
+local qS = quiz.get_translator
 local gui = flow.widgets
 local getSession = quiz.getSession
 local isInvalidQuiz = quiz.isInvalidQuiz
@@ -40,8 +41,9 @@ local function flowEdit(player, ctx)
       gui.Label{label=S("Quiz Editor"), h=1, align_h = "centre", expand = true},
       gui.Spacer{},
       -- These buttons will be on the right-hand side of the screen
-      gui.ButtonExit{name="btnCancel", label = S("Cancel"), on_event = function(player, ctx)
+      gui.Button{name="btnCancel", label = S("Cancel"), on_event = function(player, ctx)
         if ctx.parent then ctx.parent.self:show(player, ctx.parent) end
+        ctx.self:close(player)
       end},
       gui.Button{name="btnOk", label = S("Ok"), on_event = function(player, ctx)
         local v = ctx.quiz
@@ -60,7 +62,7 @@ local function flowEdit(player, ctx)
           v.answer = minetest.is_yes(v.answer)
         end
         if isInvalidQuiz(v) then
-          local msg = S("title and answer params required")
+          local msg = qS("title and answer params required")
           minetest.chat_send_player(player:get_player_name(), msg)
           return true
         end
@@ -73,12 +75,12 @@ local function flowEdit(player, ctx)
     },
     gui.Textarea{
       name="fdTitle",
-      label=S("Title"),
+      label=S("Quiz Title"),
       w = 7,
       h = 2,
       default = formspec_escape(vQuiz.title),
     },
-    gui.Label {label = S("Type")},
+    gui.Label {label = S("Quiz Type")},
     gui.Dropdown {
       name="fdType",
       items=sTypeItems,

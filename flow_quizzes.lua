@@ -23,8 +23,6 @@ local gui = flow.widgets
 local getSession = quiz.getSession
 local calcType = quiz.calcType
 
-local quizAdminForm
-
 local TYPES_STR = {
   string = S("string"),
   number = S("number"),
@@ -79,7 +77,6 @@ local function genQuizList(session)
     return search.result
   end
   local quizList = settings.quiz
-  print('TCL:: ~ file: flow_quizzes.lua ~ line 82 ~ quizList', dump(quizList));
   local result = nil -- session.quizList
   if result == nil then
     result = {}

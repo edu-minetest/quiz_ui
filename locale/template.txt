@@ -1,0 +1,38 @@
+# textdomain: quiz_ui
+Quizzes=
+Awards=
+Advance Config=
+Award Editor=
+Id=
+Award Title=
+Count=
+Mod Name=
+default=
+Total Play Time=
+minute=
+Rest Time=
+Idle Interval Time=
+Check Interval Time=
+second=
+Quiz Editor=
+Quiz Title=
+Quiz Type=
+Answer=
+Options=
+Cancel=
+Ok=
+string=
+number=
+boolean=
+calc=
+select=
+New=
+Edit=
+Delete=
+Show the Quiz Manager UI=
+
+
+##### not used anymore #####
+
+# textdomain: quiz_ui
+Quiz Manager=

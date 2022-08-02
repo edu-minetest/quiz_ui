@@ -22,10 +22,10 @@ local function uiChatCommand(playerName, param)
 end
 quiz.defaultChatCmd = uiChatCommand
 
-minetest.register_chatcommand("quiz_ui", {
-  description = S("Show the Quiz Manager UI"),
-  privs = {
-    quiz = true,
-  },
-  func = uiChatCommand,
-})
+-- minetest.register_chatcommand("quiz_ui", {
+--   description = S("Show the Quiz Manager UI"),
+--   privs = {
+--     quiz = true,
+--   },
+--   func = uiChatCommand,
+-- })
