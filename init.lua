@@ -1,4 +1,4 @@
-local minetest, quiz, yaml, DIR_DELIM, fgettext = minetest, quiz, yaml, DIR_DELIM, fgettext
+local minetest, quiz, yaml, DIR_DELIM = minetest, quiz, yaml, DIR_DELIM
 local formspec_escape = minetest.formspec_escape
 
 local MOD_NAME = minetest.get_current_modname()
