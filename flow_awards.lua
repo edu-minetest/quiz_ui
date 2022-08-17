@@ -99,7 +99,7 @@ local function flowAwards(player, ctx)
         name="btnEdit", label = S("Edit"),
         on_event = function(player, ctx)
           local evt = ctx.form.tblAwards
-          if evt and evt.row then
+          if type(evt) == "table" and evt.row then
             local awards = settings.awards
             local award = awards[evt.row]
             -- local session = ctx.session
@@ -113,7 +113,7 @@ local function flowAwards(player, ctx)
         name="btnDel", label = S("Delete"),
         on_event = function(player, ctx)
           local evt = ctx.form.tblAwards
-          if evt and evt.row then
+          if type(evt) == "table" and evt.row then
             table.remove(settings.awards, evt.row)
             return true
           end

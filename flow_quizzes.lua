@@ -181,7 +181,7 @@ local function flowQuizAdmin(player, ctx)
         name="btnEdit", label = S("Edit"),
         on_event = function(player, ctx)
           local evt = ctx.form.tblQuiz
-          if evt and evt.row then
+          if type(evt) == "table" and evt.row then
             local quizList = settings.quiz
             local quiz = quizList[evt.row]
             -- local session = ctx.session
@@ -198,7 +198,7 @@ local function flowQuizAdmin(player, ctx)
         name="btnDel", label = S("Delete"),
         on_event = function(player, ctx)
           local evt = ctx.form.tblQuiz
-          if evt and evt.row then
+          if type(evt) == "table" and evt.row then
             local session = getSession(player)
             local quizList = settings.quiz
             local search = session.search
