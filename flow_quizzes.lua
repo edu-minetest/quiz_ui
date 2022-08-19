@@ -1,4 +1,4 @@
-local minetest, quiz, yaml, flow, DIR_DELIM = minetest, quiz, yaml, flow, DIR_DELIM
+local minetest, quiz, flow = minetest, quiz, flow
 
 local formspec_escape = minetest.formspec_escape
 -- local defaultTextureDir = minetest.get_texturepath_share() .. DIR_DELIM .. "base" ..
@@ -10,7 +10,6 @@ local openQuizEdit = dofile(MOD_PATH .. "flow_quiz.lua").open
 
 
 local S = quiz_ui.get_translator
-local qS = quiz.get_translator
 
 local settings = quiz.settings
 -- local Quizzes = quiz.quizzes

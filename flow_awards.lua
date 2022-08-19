@@ -1,12 +1,11 @@
-local minetest, quiz, yaml, flow, DIR_DELIM = minetest, quiz, yaml, flow, DIR_DELIM
+local minetest, quiz, flow = minetest, quiz, flow
 
 local MOD_PATH = quiz_ui.MOD_PATH
 
 local openAwardEdit = dofile(MOD_PATH .. "flow_award.lua").open
 
-local formspec_escape = minetest.formspec_escape
+-- local formspec_escape = minetest.formspec_escape
 local S = quiz_ui.get_translator
-local qS = quiz.get_translator
 
 local settings = quiz.settings
 

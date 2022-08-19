@@ -1,6 +1,5 @@
-local minetest, quiz, yaml, flow, DIR_DELIM = minetest, quiz, yaml, flow, DIR_DELIM
+local minetest, flow = minetest, flow
 local S = quiz_ui.get_translator
-local qS = quiz.get_translator
 local gui = flow.widgets
 local formspec_escape = minetest.formspec_escape
 
