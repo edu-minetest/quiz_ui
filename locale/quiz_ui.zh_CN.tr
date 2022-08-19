@@ -2,31 +2,40 @@
 Quizzes=挑战问题列表
 Awards=奖品列表
 Advance Config=高级配置
+Quiz config file saving failed.=配置文件保存失败
+Cancel=取消
+Ok=确定
 Award Editor=编辑奖品
 Id=Id
 Award Title=奖品标题
 Count=数量
 Mod Name=模组名称
-default=默认
+New=新建
+Edit=编辑
+Delete=删除
 Total Play Time=游戏时间
 minute=分钟
 Rest Time=休息时间
+reset @1 successful=@1 时间重置成功
 Idle Interval Time=出题间隔
 Check Interval Time=检查间隔
 second=秒
+Force Admin Rest=强制管理员休息
 Quiz Editor=问题编辑器
 Quiz Title=问题标题
 Quiz Type=问题类型
 Answer=答案
 Options=选项
-Cancel=取消
-Ok=确定
 string=文字
 number=数值
 boolean=是/否
 calc=四则计算
 select=选择题
-New=新建
-Edit=编辑
-Delete=删除
 Show the Quiz Manager UI=进入挑战管理界面
+
+
+##### not used anymore #####
+
+Quiz config file loaded.=测验的配置文件加载完毕
+Quiz config file loading failed.=配置文件加载失败
+Quiz config file saved.=配置文件保存完毕
