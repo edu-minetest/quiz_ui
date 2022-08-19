@@ -1,4 +1,4 @@
-local minetest, quiz, yaml, flow, DIR_DELIM = minetest, quiz, yaml, flow, DIR_DELIM
+local minetest, quiz, flow = minetest, quiz, flow
 
 local MOD_PATH = quiz_ui.MOD_PATH
 
@@ -83,10 +83,18 @@ local function flowAdmin(player, ctx)
       end},
       gui.ButtonExit{name="btnOk", label = S("Ok"), on_event = function(player, ctx)
         local msg = qS("Quiz config file saved.")
-        if not saveConfig() then
-          msg = qS("Quiz config file saving failed.")
-        end
-        minetest.chat_send_player(player:get_player_name(), msg)
+        local playerName = player:get_player_name()
+        minetest.after(2, function()
+          if saveConfig() then
+            local lastTotalPlayTime = getSession(playerName).totalPlayTime
+            if lastTotalPlayTime ~= quiz.settings.totalPlayTime then
+              quiz.resetGameTime(playerName)
+            end
+          else
+            msg = S("Quiz config file saving failed.")
+          end
+          minetest.chat_send_player(playerName, msg)
+        end)
       end},
     },
     tabs[current_tab].flow(player, ctx),
