@@ -45,7 +45,7 @@ local function genField(label, name, type)
   }
 
   if type == "Checkbox" then
-    params.select = settings[name]
+    params.selected = settings[name]
   else
     params.default = "" .. settings[name]
     params.w = 3.75
