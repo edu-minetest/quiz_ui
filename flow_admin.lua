@@ -91,7 +91,7 @@ local function flowAdmin(player, ctx)
               quiz.resetGameTime(playerName)
             end
           else
-            msg = S("Quiz config file saving failed.")
+            msg = qS("Quiz config file saving failed.")
           end
           minetest.chat_send_player(playerName, msg)
         end)
