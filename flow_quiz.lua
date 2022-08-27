@@ -47,7 +47,6 @@ local function flowEdit(player, ctx)
       end},
       gui.Button{name="btnOk", label = S("Ok"), on_event = function(player, ctx)
         local v = ctx.quiz
-        print("ok:quiz", dump(v))
         v.title = ctx.form.fdTitle
         v.answer = ctx.form.fdAnswer
         if v.answer then
@@ -117,7 +116,6 @@ local function flowEdit(player, ctx)
       default = formspec_escape(table.concat(vOpts, "\n")),
     })
   elseif vQuiz.type == "calc" then
-    print("calc:ctx.quiz.forceInt", ctx.quiz.forceInt)
     table.insert(result, gui.Checkbox {
       name="fdForceInt",
       label=S("Force Int"),
