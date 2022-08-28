@@ -2,7 +2,6 @@
 Quizzes=挑战问题列表
 Awards=奖品列表
 Advance Config=高级配置
-Quiz config file saving failed.=配置文件保存失败
 Award Editor=编辑奖品
 Id=Id
 Award Title=奖品标题
@@ -20,6 +19,7 @@ reset @1 successful=@1 时间重置成功
 Idle Interval Time=出题间隔
 Check Interval Time=检查间隔
 second=秒
+Quiz Immediately=进入后立即作答
 Force Admin Rest=强制管理员休息
 Quiz Editor=问题编辑器
 Quiz Title=问题标题
@@ -37,6 +37,7 @@ Show the Quiz Manager UI=进入挑战管理界面
 
 ##### not used anymore #####
 
+Quiz config file saving failed.=配置文件保存失败
 Quiz config file loaded.=测验的配置文件加载完毕
 Quiz config file loading failed.=配置文件加载失败
 Quiz config file saved.=配置文件保存完毕

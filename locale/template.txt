@@ -2,7 +2,6 @@
 Quizzes=
 Awards=
 Advance Config=
-Quiz config file saving failed.=
 Award Editor=
 Id=
 Award Title=
@@ -20,6 +19,7 @@ reset @1 successful=
 Idle Interval Time=
 Check Interval Time=
 second=
+Quiz Immediately=
 Force Admin Rest=
 Quiz Editor=
 Quiz Title=

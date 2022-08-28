@@ -92,6 +92,7 @@ local function flowConfig(player, ctx)
     gui.HBox{
       genField(S("Idle Interval Time").."("..S("minute") ..")", "idleInterval"),
       genField(S("Check Interval Time").."("..S("second") ..")", "checkInterval"),
+      genField(S("Quiz Immediately"), "immediateQuiz", "Checkbox"),
       genField(S("Force Admin Rest"), "forceAdminRest", "Checkbox"),
     },
   }
