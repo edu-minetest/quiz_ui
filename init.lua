@@ -9,7 +9,7 @@ quiz_ui = {}
 local S = minetest.get_translator(MOD_NAME)
 quiz_ui.get_translator = S
 
-local MOD_PATH = minetest.get_modpath(MOD_NAME) .. "/"
+local MOD_PATH = minetest.get_modpath(MOD_NAME) .. DIR_DELIM
 quiz_ui.MOD_PATH = MOD_PATH
 
 local openQuizAdmin = dofile(MOD_PATH .. "flow_admin.lua").open
