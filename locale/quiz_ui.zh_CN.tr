@@ -33,6 +33,8 @@ boolean=是/否
 calc=四则计算
 select=选择题
 Show the Quiz Manager UI=进入挑战管理界面
+in modData=在mod_data目录中
+in world=在worlds目录中
 
 
 ##### not used anymore #####

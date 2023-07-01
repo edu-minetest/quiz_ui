@@ -85,10 +85,14 @@ local function flowAdmin(player, ctx)
         local msg = qS("Quiz config file saved.")
         local playerName = player:get_player_name()
         minetest.after(2, function()
-          if saveConfig() then
+          local ok, result = saveConfig()
+          if ok then
             local lastTotalPlayTime = getSession(playerName).totalPlayTime
             if lastTotalPlayTime ~= quiz.settings.totalPlayTime then
               quiz.resetGameTime(playerName)
+            end
+            if (result ~= nil and result ~= '') then
+              msg = msg .. '(' .. S('in ' .. result) .. ')'
             end
           else
             msg = qS("Quiz config file saving failed.")

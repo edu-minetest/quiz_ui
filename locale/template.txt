@@ -33,7 +33,8 @@ boolean=
 calc=
 select=
 Show the Quiz Manager UI=
-
+in modData =
+in world =
 
 ##### not used anymore #####
 
