@@ -118,7 +118,8 @@ local function openAdmin(playerName, params)
   if params == nil then params = {} end
   params.self = self
   -- local ctx = {self = self, parent = params.parent}
-  self:show(playerName, params)
+  local player = minetest.get_player_by_name(playerName)
+  self:show(player, params)
 end
 
 return {
