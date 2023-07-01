@@ -13,8 +13,8 @@ local S = quiz_ui.get_translator
 
 local settings = quiz.settings
 -- local Quizzes = quiz.quizzes
-local loadConfig = quiz.loadConfig
-local saveConfig = quiz.saveConfig
+-- local loadConfig = quiz.loadConfig
+-- local saveConfig = quiz.saveConfig
 -- GUI elements are accessible with flow.widgets. Using
 -- `local gui = flow.widgets` is recommended to reduce typing.
 local gui = flow.widgets
@@ -87,6 +87,28 @@ local function genQuizList(session)
   return result
 end
 
+local function getQuizItemFromRow(row, session)
+  local quizList = settings.quiz
+  if (session.search ~= nil) then
+    row = session.search.lookup[row]
+  end
+  return quizList[row]
+end
+
+local function editQuizItem(player, row, ctx)
+  local session = getSession(player)
+  local vQuiz = getQuizItemFromRow(row, session)
+  openQuizEdit(player, {
+    quiz = vQuiz, parent = ctx,
+    on_ok = function(player, ctx)
+      local search = session.search
+      if search then
+        search.refresh = true
+      end
+    end,
+  })
+end
+
 local function flowQuizList(player, ctx)
   local session = getSession(player)
   local result = gui.VBox {
@@ -105,11 +127,7 @@ local function flowQuizList(player, ctx)
         local evt = ctx.form.tblQuiz
         if evt.type == "DCL" then
           -- double-click
-          local quizList = settings.quiz
-          openQuizEdit(player, {
-            quiz = quizList[evt.row],
-            parent = ctx,
-          })
+          editQuizItem(player, evt.row, ctx)
         end
       end
     }
@@ -120,9 +138,10 @@ end
 local function do_search(player, ctx)
   local search_for = ctx.form.fdSearch
   local session = getSession(player)
+  local refresh = session.search and session.search.refresh
   local last_search = session.last_search
   local repaint = false
-  if search_for == last_search then return end
+  if search_for == last_search and refresh ~= true then return end
   if search_for and #search_for > 0 then
     searchQuizzes(search_for, session)
     repaint = true
@@ -156,7 +175,7 @@ local function flowQuizAdmin(player, ctx)
         texture_name = "clear.png",
         on_event = function(player, ctx)
           local session = getSession(player)
-          -- session.search_for = ""
+          session.last_search = ""
           ctx.form.fdSearch = ""
           session.search = nil
           return true
@@ -171,6 +190,11 @@ local function flowQuizAdmin(player, ctx)
             on_ok = function(player, ctx)
               if ctx.quiz then
                 table.insert(settings.quiz, ctx.quiz)
+                local session = getSession(player)
+                local search = session.search
+                if search then
+                  search.refresh = true
+                end
               end
             end
         })
@@ -181,15 +205,7 @@ local function flowQuizAdmin(player, ctx)
         on_event = function(player, ctx)
           local evt = ctx.form.tblQuiz
           if type(evt) == "table" and evt.row then
-            local quizList = settings.quiz
-            local quiz = quizList[evt.row]
-            -- local session = ctx.session
-            openQuizEdit(player, {
-              quiz = quiz, parent = ctx,
-              on_ok = function(player, ctx)
-                -- session.quizList = nil
-              end
-            })
+            editQuizItem(player, evt.row, ctx)
           end
         end
       },
@@ -197,15 +213,20 @@ local function flowQuizAdmin(player, ctx)
         name="btnDel", label = S("Delete"),
         on_event = function(player, ctx)
           local evt = ctx.form.tblQuiz
-          if type(evt) == "table" and evt.row then
+          local row = evt.row
+          if type(evt) == "table" and row > 0 then
             local session = getSession(player)
             local quizList = settings.quiz
             local search = session.search
             if search then
-              local idx =search.lookup[evt.row]
-              table.remove(quizList, idx)
-            else
-              table.remove(quizList, evt.row)
+              row = search.lookup[row]
+            end
+            if row > 0 then
+              table.remove(quizList, row)
+              if search then
+                search.refresh = true
+                do_search(player, ctx)
+              end
             end
             -- session.quizList = nil
             return true
